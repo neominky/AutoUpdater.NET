@@ -260,3 +260,4 @@ paket-files/
 /AutoUpdater.NET/Resources/ZipExtractor.runtimeconfig.dev.json
 /AutoUpdater.NET/Resources/ZipExtractor.dll
 /AutoUpdater.NET/Resources/ZipExtractor.deps.json
+/AutoUpdater.NET/Resources/SevenZipExtractor.dll
