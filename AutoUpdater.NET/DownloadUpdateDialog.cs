@@ -163,13 +163,23 @@ internal partial class DownloadUpdateDialog : Form
             };
 
             string extension = Path.GetExtension(tempPath);
-            if (extension.Equals(".zip", StringComparison.OrdinalIgnoreCase))
+            if (extension.Equals(".zip", StringComparison.OrdinalIgnoreCase) || extension.Equals(".7z", StringComparison.OrdinalIgnoreCase))
             {
                 string installerPath =
                     Path.Combine(Path.GetDirectoryName(tempPath) ?? throw new InvalidOperationException(),
                         "ZipExtractor.exe");
+                
+                //extract 7zip
+                string installerDllPath = Path.Combine(Path.GetDirectoryName(tempPath) ?? throw new InvalidOperationException(), "SevenZipExtractor.dll");
+                string installer7zx64DllPath = Path.Combine(Path.GetDirectoryName(tempPath) ?? throw new InvalidOperationException(), "x64", "7z.dll");
+                string installer7zx86DllPath = Path.Combine(Path.GetDirectoryName(tempPath) ?? throw new InvalidOperationException(), "x86", "7z.dll");
+                System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(installer7zx64DllPath));
+                System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(installer7zx86DllPath));
 
                 File.WriteAllBytes(installerPath, Resources.ZipExtractor);
+                File.WriteAllBytes(installerDllPath, Resources.SevenZipExtractor);
+                File.WriteAllBytes(installer7zx64DllPath, Resources.File_7z_x64);
+                File.WriteAllBytes(installer7zx86DllPath, Resources.File_7z_x86);
 
                 string currentExe = Process.GetCurrentProcess().MainModule?.FileName;
                 string updatedExe = _args.ExecutablePath;
