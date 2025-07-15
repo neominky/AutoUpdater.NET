@@ -176,8 +176,15 @@ namespace ZipExtractor
                                         {
                                             throw new ArgumentNullException($"parentDirectory is null for \"{filePath}\"!");
                                         }
-                                        // extract to file
-                                        entry.Extract(entry.FileName, true);
+                                        // extract to file                                        
+                                        using (Stream destination = File.Open(filePath, FileMode.OpenOrCreate, FileAccess.Write,
+                                                   FileShare.None))
+                                        {
+                                            entry.Extract(destination);
+                                            destination.SetLength(destination.Position);
+                                        }
+                                        
+                                        File.SetLastWriteTime(filePath, entry.LastWriteTime);
                                     }
                                     notCopied = false;
                                 }
@@ -222,10 +229,10 @@ namespace ZipExtractor
                                         Invoke(new Action(() =>
                                         {
                                             dialogResult = MessageBox.Show(this,
-                                            string.Format(Resources.FileStillInUseMessage,
-                                                lockingProcess.ProcessName, filePath),
-                                            Resources.FileStillInUseCaption,
-                                            MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+                                                string.Format(Resources.FileStillInUseMessage,
+                                                    lockingProcess.ProcessName, filePath),
+                                                Resources.FileStillInUseCaption,
+                                                MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
                                         }));
                                         if (dialogResult == DialogResult.Cancel)
                                         {

@@ -261,3 +261,4 @@ paket-files/
 /AutoUpdater.NET/Resources/ZipExtractor.dll
 /AutoUpdater.NET/Resources/ZipExtractor.deps.json
 /AutoUpdater.NET/Resources/SevenZipExtractor.dll
+/ZipExtractor/Properties/launchSettings.json
