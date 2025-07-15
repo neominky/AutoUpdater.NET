@@ -100,7 +100,7 @@ namespace ZipExtractor
 
                 _logBuilder.AppendLine("BackgroundWorker started successfully.");
 
-                ControlBox = false;
+                Invoke(new Action(() => { ControlBox = false; }));
 
                 // Ensures that the last character on the extraction path
                 // is the directory separator char.
@@ -217,11 +217,16 @@ namespace ZipExtractor
 
                                     foreach (Process lockingProcess in lockingProcesses)
                                     {
-                                        DialogResult dialogResult = MessageBox.Show(this,
+                                        var dialogResult = DialogResult.None;
+
+                                        Invoke(new Action(() =>
+                                        {
+                                            dialogResult = MessageBox.Show(this,
                                             string.Format(Resources.FileStillInUseMessage,
                                                 lockingProcess.ProcessName, filePath),
                                             Resources.FileStillInUseCaption,
                                             MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+                                        }));
                                         if (dialogResult == DialogResult.Cancel)
                                         {
                                             throw;
