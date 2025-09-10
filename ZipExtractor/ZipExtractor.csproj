@@ -5,14 +5,14 @@
         <OutputType>WinExe</OutputType>
         <TargetFramework>net45</TargetFramework>
         <UseWindowsForms>true</UseWindowsForms>
-        <AssemblyTitle>ZipExtractor</AssemblyTitle>
+        <AssemblyTitle>CID Updater</AssemblyTitle>
         <Company>RBSoft</Company>
-        <Product>ZipExtractor</Product>
-        <Copyright>Copyright © 2012-2024 RBSoft</Copyright>
-		<Version>1.5.4.0</Version>
-		<AssemblyVersion>1.5.4.0</AssemblyVersion>
-		<FileVersion>1.5.4.0</FileVersion>
-		<ApplicationVersion>1.5.4.0</ApplicationVersion>
+        <Product>CID Updater</Product>
+        <Copyright>Copyright © 2012-2024 RBSoft modified by SK B Contact Center Co., Ltd.</Copyright>
+		<Version>1.5.4.21</Version>
+		<AssemblyVersion>1.5.4.21</AssemblyVersion>
+		<FileVersion>1.5.4.21</FileVersion>
+		<ApplicationVersion>1.5.4.21</ApplicationVersion>
         <ApplicationIcon>ZipExtractor.ico</ApplicationIcon>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <SignAssembly>False</SignAssembly>

@@ -138,12 +138,14 @@ namespace ZipExtractor
                             directory.Delete(true);
                         }
                     }
-
+                    
                     using (ArchiveFile archiveFile = new ArchiveFile(zipPath))
                     {
+
                         var allcount = archiveFile.Entries.Count;
                         _logBuilder.AppendLine($"Found total of {allcount} files and folders inside the zip file.");
                         var entryindex = 0;
+
                         foreach (Entry entry in archiveFile.Entries)
                         {
                             if (_backgroundWorker.CancellationPending)
@@ -151,8 +153,8 @@ namespace ZipExtractor
                                 eventArgs.Cancel = true;
                                 break;
                             }
-
-                            string currentFile = string.Format(Resources.CurrentFileExtracting, entry.FileName);
+                            //string currentFile = string.Format(Resources.CurrentFileExtracting, entry.FileName);
+                            string currentFile = string.Format(Resources.Removing, entry.FileName);
                             _backgroundWorker.ReportProgress(progress, currentFile);
                             var retries = 0;
                             var notCopied = true;
@@ -177,14 +179,15 @@ namespace ZipExtractor
                                             throw new ArgumentNullException($"parentDirectory is null for \"{filePath}\"!");
                                         }
                                         // extract to file                                        
-                                        using (Stream destination = File.Open(filePath, FileMode.OpenOrCreate, FileAccess.Write,
-                                                   FileShare.None))
-                                        {
-                                            entry.Extract(destination);
-                                            destination.SetLength(destination.Position);
-                                        }
-                                        
-                                        File.SetLastWriteTime(filePath, entry.LastWriteTime);
+                                        //using (Stream destination = File.Open(filePath, FileMode.OpenOrCreate, FileAccess.Write,
+                                        //           FileShare.None))
+                                        //{
+                                        //    Debug.WriteLine($"extracting : {filePath}");
+                                        //    entry.Extract(destination);
+                                        //    destination.SetLength(destination.Position);
+                                        //}                                                                                
+                                        File.Delete(filePath);
+                                        //File.SetLastWriteTime(filePath, entry.LastWriteTime);
                                     }
                                     notCopied = false;
                                 }
@@ -248,6 +251,7 @@ namespace ZipExtractor
                             _logBuilder.AppendLine($"{currentFile} [{progress}%]");
                             entryindex++;
                         }
+                        ExtractAll(extractionPath, progress, archiveFile, eventArgs);
                     }
                 }
                 finally
@@ -321,6 +325,46 @@ namespace ZipExtractor
             };
 
             _backgroundWorker.RunWorkerAsync();
+        }
+
+        private void ExtractAll(string extractionPath, int progress, ArchiveFile archiveFile, DoWorkEventArgs eventArgs)
+        {
+            while (true)
+            {
+                if (_backgroundWorker.CancellationPending)
+                {
+                    eventArgs.Cancel = true;
+                    break;
+                }
+                System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+                try
+                {
+                    _backgroundWorker.ReportProgress(progress, string.Format(Resources.CurrentFileExtracting, "CID"));
+                    stopwatch.Reset();
+                    stopwatch.Start();
+                    _logBuilder.AppendLine($"extracting all to {extractionPath}");
+                    archiveFile.Extract(extractionPath, true);
+                    stopwatch.Stop();
+                    _logBuilder.AppendLine($"extracted all in {stopwatch.ElapsedMilliseconds} milliseconds");
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    var dialogResult = DialogResult.None;
+
+                    Invoke(new Action(() =>
+                    {
+                        dialogResult = MessageBox.Show(this,
+                            ex.Message,
+                            Resources.FileStillInUseCaption,
+                            MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+                    }));
+                    if (dialogResult == DialogResult.Cancel)
+                    {
+                        throw;
+                    }
+                }
+            }
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
